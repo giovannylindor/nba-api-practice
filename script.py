@@ -12,32 +12,33 @@ api = BalldontlieAPI(os.getenv("BALLDONTLIE_API"))
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', nargs='+', help='Fetches a Players General Information')
-    parser.add_argument('-ll', nargs=1, help="Fetches the League Leader in a Specific Stat." \
-    "\nFor Points, ENTER: PPG\nFor Assists, " \
-    "ENTER: AST\nFor Rebounds, ENTER: REB")
+    parser.add_argument('--t',  action='store_true', help="Fetches all 30 NBA Teams")
     args = parser.parse_args()
     
     if args.p:
         get_player(args)
         
-    if args.ll:
-        get_league_leader(args)
+    if args.t:
+        get_all_teams(args)
 
 
-def get_league_leader(args):
-    """Fetches the league leader"""
+def get_all_teams(args):
+    """Fetches all 30 nba teams"""
     try:
-        if args.p == 'pts':
-            f = io.StringIO()
-            with redirect_stdout(f):            
-                leader = api.nba.leaders.get(stat_type='pts', season=2023)
+        teams = [ ]
+        all_teams_response = api.nba.teams.list()
+        formatted_teams = all_teams_response.data[0:30]
         
-            player = leader.data[0]
-            print(f"The League Leader in Points is {player}")
-    except (UnboundLocalError, IndexError):
-        print("Cannot Find Player!")
+        for t in formatted_teams:
+            teams.append(t.full_name)
 
+        for team in teams:
+            print(team)
+        
 
+    except (IndexError, UnboundLocalError):
+        pass
+    
 
 
 
