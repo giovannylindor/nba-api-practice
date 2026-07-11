@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 api = BalldontlieAPI(os.getenv("BALLDONTLIE_API"))
- 
+
 
 def parse():
     parser = argparse.ArgumentParser()
@@ -34,14 +34,9 @@ def get_all_teams(args):
 
         for team in teams:
             print(team)
-        
 
     except (IndexError, UnboundLocalError):
         pass
-    
-
-
-
 
 
 def get_player(args):
@@ -51,16 +46,20 @@ def get_player(args):
     try:
         if len(args.p) == 1:
             first_name = args.p[0]
+
             f = io.StringIO()
             with redirect_stdout(f):
                 player_query = api.nba.players.list(first_name=first_name)
+            
             player = player_query.data[0]
         else:
             first_name = args.p[0]
             last_name = args.p[1]
+            
             f = io.StringIO()
             with redirect_stdout(f):
                 player_query = api.nba.players.list(first_name=first_name, last_name=last_name)
+            
             player = player_query.data[0]
 
         print(f"Name: {player.first_name} {player.last_name}"
